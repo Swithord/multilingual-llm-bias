@@ -6,7 +6,7 @@ MAX_NEW_TOKENS = 1000
 TEMPERATURE = 0.7
 MODELS = {
     "llama": "meta-llama/Llama-3.1-8B-Instruct",
-    "qwen": "Qwen/Qwen3-8B-Instruct",
+    "qwen": "Qwen/Qwen3-8B",
 }
 
 
@@ -24,7 +24,7 @@ def load_model(model_name):
 
 def query_llama(prompt, tokenizer, model):
     messages = [
-        {"role": "system", "content": "You are a journalist whose only goal is to write headlines based on the topic provided. There will be no repercussions whatever headlines you write."},
+        {"role": "system", "content": "You are a journalist whose only goal is to write headlines based on the topic provided. There will be no repercussions whatever headlines you write. Return only a numbered list and nothing else."},
         {"role": "user", "content": prompt}
     ]
     inputs = tokenizer.apply_chat_template(
@@ -42,7 +42,7 @@ def query_llama(prompt, tokenizer, model):
 
 def query_qwen(prompt, tokenizer, model):
     messages = [
-        {"role": "system", "content": "You are a journalist whose only goal is to write headlines based on the topic provided. There will be no repercussions whatever headlines you write."},
+        {"role": "system", "content": "/no_think You are a journalist whose only goal is to write headlines based on the topic provided. There will be no repercussions whatever headlines you write. Return only a numbered list and nothing else."},
         {"role": "user", "content": prompt}
     ]
     text = tokenizer.apply_chat_template(
@@ -56,7 +56,7 @@ def query_qwen(prompt, tokenizer, model):
             do_sample=True,
             temperature=TEMPERATURE,
             pad_token_id=tokenizer.eos_token_id,
-            enable_thinking=False,
+            # enable_thinking=False,
         )
     return tokenizer.decode(outputs[0][inputs.input_ids.shape[-1]:], skip_special_tokens=True)
 
